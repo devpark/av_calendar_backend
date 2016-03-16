@@ -1,0 +1,243 @@
+swagger: '2.0'
+info:
+  title: Users
+  description: Display and manage user accounts
+  version: "1.0.0"
+# the domain of the service
+host: api.cep.devpark.pl
+# array of all schemes that your API supports
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json  
+
+# will be prefixed to all paths
+basePath: /
+paths:
+  /users:
+    get:
+      summary: Display list of users
+      description: |
+        Displays list of users. Depending on current user role, number of users may differ (for example for Admin we as a result you will get all the users but for others you might get list only of users assigned to same projects)
+      tags:
+        - User
+      responses:
+        200:
+          description: Users list
+          schema: 
+              $ref: "#/definitions/SuccessUsersIndexResponse"
+        401:
+          description: User has no access to display this page. As code you will get `general.no_action_permission`
+          schema: 
+              $ref: "#/definitions/ErrorResponse" 
+    post:
+      summary: Create new user
+      description: |
+        Creates new user account. Depending on system settings this can work only for authenticated users or also for guests.
+      tags:
+        - User 
+      parameters:
+        - name: email
+          in: formData
+          description: User e-mail
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: User password (in some cases might be empty and then random password will be set)
+          required: false
+          type: string
+        - name: password_confirmation
+          in: formData
+          description: User password confirmation (should be exact same as `password`)
+          required: true
+          type: string   
+        - name: first_name
+          in: formData
+          description: User first name (in some cases might be empty)
+          required: false
+          type: string     
+        - name: last_name
+          in: formData
+          description: User last name (in some cases might be empty)
+          required: false
+          type: string
+        - name: role_id
+          in: formData
+          description: Id of role assigned to user (in some cases it might be ignored when creating user account and other role might be used)
+          required: true
+          type: number
+          format: int
+        - name: send_user_notification
+          in: formData
+          description: Whether notification should be sent to user that his account was created
+          required: true
+          type: boolean
+        - name: url
+          in: formData
+          description: Url that should be put into notification to give user website url.  This field is required if `send_user_notification` is set to `true`
+          required: false
+          type: string
+          
+      responses:
+        201:
+          description: User was successfully saved
+          schema: 
+              $ref: "#/definitions/UserSavedResponse"
+        422:
+          description: Validation error. As code you will get `general.validation_failed`
+          schema: 
+              $ref: "#/definitions/ErrorResponse"
+        401:
+          description: User has no access to display this page. As code you will get `general.no_action_permission`
+          schema: 
+              $ref: "#/definitions/ErrorResponse"             
+                  
+  /users/current:
+    get:
+      summary: Display current user data
+      description: |
+        Displays current user data
+      tags:
+        - User
+      responses:
+        200:
+          description: Current user data
+          schema: 
+              $ref: "#/definitions/SuccessUserResponse"
+        401:
+          description: User has no access to display this page. It probably means that he's not logged in.
+          schema: 
+              $ref: "#/definitions/ErrorResponse"        
+                      
+definitions:
+  SuccessUsersIndexResponse:
+    type: object
+
+    properties:
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/User"         
+      exec_time:
+        type: number
+        format: float
+        description: API execution time
+  
+  UserSavedResponse:      
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/User"         
+      exec_time:
+        type: number
+        format: float
+        description: API execution time   
+             
+  SuccessUserResponse:      
+    type: object
+    properties:
+      data:
+        $ref: "#/definitions/UserWithRole"         
+      exec_time:
+        type: number
+        format: float
+        description: API execution time                              
+             
+  User:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int
+        description: User id
+      email:   
+        type: string
+        description: User e-mail
+      first_name:   
+        type: string
+        description: User first name
+      last_name:   
+        type: string
+        description: User last name
+      role_id:   
+        type: number
+        format: int
+        description: User role id
+      avatar:
+        type: string
+        description: User avatar
+      deleted:
+        type: number
+        format: int
+        description: Whether user has been deleted
+        
+  UserWithRole:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int
+        description: User id
+      email:   
+        type: string
+        description: User e-mail
+      first_name:   
+        type: string
+        description: User first name
+      last_name:   
+        type: string
+        description: User last name
+      role_id:   
+        type: number
+        format: int
+        description: User role id
+      avatar:
+        type: string
+        description: User avatar
+      deleted:
+        type: number
+        format: int
+        description: Whether user has been deleted
+      role:
+          $ref: "#/definitions/RoleStructure"  
+            
+            
+  RoleStructure:
+    type: object
+    properties:
+      data:
+        type: array
+        description: Role data
+        items: 
+            $ref: "#/definitions/Role"          
+                  
+  Role:
+    type: object
+    properties:
+      id:
+        type: number
+        format: int
+        description: Role id
+      name:   
+        type: string
+        description: Role slug                 
+        
+        
+  ErrorResponse:
+    type: object
+    properties:
+      code:
+        type: string
+        description: Error code.
+      fields:
+        type: array
+        description: Error messages for each field. As keys you will get field names and as values you will get error messages for those fields
+        items: 
+          type: string
+      exec_time:
+        type: number
+        format: float 
+        description: API execution time
