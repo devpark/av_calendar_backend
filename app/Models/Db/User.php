@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Db;
 
+use App\Interfaces\CompanyInterface;
+use App\Models\Other\RoleType;
+use App\Models\Other\UserCompanyStatus;
 use App\Modules\User\Traits\Active;
 use App\Modules\User\Traits\Allowed;
 use App\Modules\User\Traits\Fillable;
@@ -151,7 +154,7 @@ class User extends Model implements
     ) {
         return $query->with([
             'availabilities' => function ($q) use ($startDate, $endDate, $companyId) {
-                $q->where('company_id', (int) $companyId)
+                $q->companyId((int) $companyId)
                     ->where('day', '>=', $startDate->format('Y-m-d'))
                     ->where('day', '<=', $endDate->format('Y-m-d'));
             },
@@ -254,7 +257,7 @@ class User extends Model implements
     public function selectedUserCompany()
     {
         return $this->hasOne(UserCompany::class, 'user_id')
-            ->where('company_id', $this->selected_company_id)
+            ->inCompany($this)
             ->where('status', UserCompanyStatus::APPROVED);
     }
 
@@ -276,6 +279,17 @@ class User extends Model implements
     public function isOwner()
     {
         return (bool) in_array(RoleType::OWNER, $this->getRoles());
+    }
+
+    /**
+     * Verify if user is admin or owner.
+     *
+     * @return bool
+     */
+    public function isOwnerOrAdmin()
+    {
+        return collect($this->getRoles())->intersect([RoleType::OWNER, RoleType::ADMIN])
+            ->isNotEmpty();
     }
 
     /**
@@ -418,5 +432,22 @@ class User extends Model implements
     {
         $this->activated = true;
         $this->save();
+    }
+
+    public function files()
+    {
+        return $this->belongsToMany(File::class);
+    }
+
+    /**
+     * Get user role ID in project.
+     *
+     * @param Project $project
+     *
+     * @return int
+     */
+    public function getRoleInProject($project)
+    {
+        return $this->projects->find($project->id)->pivot->role_id;
     }
 }

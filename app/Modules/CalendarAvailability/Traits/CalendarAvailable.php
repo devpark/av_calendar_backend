@@ -60,7 +60,7 @@ trait CalendarAvailable
     protected static function getForObjectsAndDaysQuery($objects, $companyId, $days)
     {
         return self::whereIn(self::$calendarObjectIdColumn, (array) $objects)
-            ->where('company_id', $companyId)
+            ->companyId($companyId)
             ->whereIn('day', (array) $days)
             ->orderBy(self::$calendarObjectIdColumn, 'ASC')
             ->orderBy('day', 'ASC')

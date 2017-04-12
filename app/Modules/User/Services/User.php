@@ -6,7 +6,7 @@ use App\Modules\User\Events\UserWasCreated;
 use Illuminate\Contracts\Events\Dispatcher as Event;
 use Illuminate\Http\Request;
 use DB;
-use App\Models\User as UserModel;
+use App\Models\Db\User as UserModel;
 
 class User
 {

@@ -2,7 +2,7 @@
 
 namespace App\Modules\CalendarAvailability\Services;
 
-use App\Models\User;
+use App\Models\Db\User;
 use Carbon\Carbon;
 use App\Modules\CalendarAvailability\Contracts\CalendarAvailability as CalendarAvailabilityContract;
 use Illuminate\Contracts\Auth\Guard;

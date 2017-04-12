@@ -4,7 +4,7 @@ namespace App\Modules\User\Http\Middleware;
 
 use App\Helpers\ApiResponse;
 use App\Helpers\ErrorCode;
-use App\Models\User;
+use App\Models\Db\User;
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Container\Container;

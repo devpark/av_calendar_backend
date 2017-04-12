@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Db;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -40,26 +40,10 @@ class Project extends Model
     }
 
     /**
-     * Check if user can access this project.
-     *
-     * @param User $user
-     *
-     * @return bool
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function isAccessible(User $user)
+    public function files()
     {
-        // Check if this project belong to selected company
-        if ($this->company_id != $user->getSelectedCompanyId()) {
-            return false;
-        }
-        if ($user->isAdmin() || $user->isOwner()) {
-            return true;
-        }
-        // Check if user is attached to this project
-        if ($this->users()->find($user->id)) {
-            return true;
-        }
-
-        return false;
+        return $this->morphMany(File::class, 'fileable');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Db;
 
 class Role extends Model
 {
@@ -38,5 +38,10 @@ class Role extends Model
     public function companies()
     {
         return $this->belongsToMany(Company::class);
+    }
+
+    public function files()
+    {
+        return $this->belongsToMany(File::class)->withTimestamps();
     }
 }

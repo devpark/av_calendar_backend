@@ -5,7 +5,7 @@ namespace App\Modules\User\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Helpers\ErrorCode;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Db\User;
 use App\Modules\User\Events\ActivationTokenWasRequested;
 use App\Modules\User\Events\UserWasActivated;
 use App\Modules\User\Http\Requests\ActivateRequest;

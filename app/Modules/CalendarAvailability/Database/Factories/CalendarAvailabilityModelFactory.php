@@ -1,6 +1,6 @@
 <?php
 
-$factory->define(App\Models\UserAvailability::class,
+$factory->define(\App\Models\Db\UserAvailability::class,
     function (Faker\Generator $faker) {
         return [
             'time_start' => $faker->time(),

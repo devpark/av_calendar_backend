@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Db;
+
+use App\Interfaces\CompanyInterface;
 
 class Company extends Model implements CompanyInterface
 {

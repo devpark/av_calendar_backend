@@ -3,7 +3,7 @@
 namespace App\Modules\CalendarAvailability\Http\Requests;
 
 use App\Http\Requests\Request;
-use App\Models\User;
+use App\Models\Db\User;
 
 class CalendarAvailabilityShow extends Request
 {

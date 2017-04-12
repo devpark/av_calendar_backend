@@ -4,8 +4,8 @@ namespace App\Modules\CalendarAvailability\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\UserAvailability;
+use App\Models\Db\User;
+use App\Models\Db\UserAvailability;
 use App\Modules\CalendarAvailability\Http\Requests\CalendarAvailabilityIndex;
 use App\Modules\CalendarAvailability\Http\Requests\CalendarAvailabilityShow;
 use App\Modules\CalendarAvailability\Http\Requests\CalendarAvailabilityStore;

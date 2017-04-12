@@ -3,7 +3,7 @@
 namespace App\Modules\User\Events;
 
 use App\Events\Event;
-use App\Models\User;
+use App\Models\Db\User;
 use Illuminate\Queue\SerializesModels;
 
 class UserWasAssignedToCompany extends Event

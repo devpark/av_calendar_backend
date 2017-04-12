@@ -2,8 +2,9 @@
 
 namespace App\Modules\User\Traits;
 
-use App\Models\Model;
-use App\Models\User;
+use App\Models\Db\Model;
+use App\Models\Db\User;
+use App\Models\Other\UserCompanyStatus;
 
 trait Allowed
 {
@@ -12,7 +13,7 @@ trait Allowed
      * current user if none user given).
      *
      * @param \Illuminate\Database\Query\Builder $query
-     * @param Model|int|null $user
+     * @param \App\Models\Db\Model|int|null $user
      *
      * @return \Illuminate\Database\Query\Builder
      */
@@ -25,16 +26,17 @@ trait Allowed
         } elseif (! $user instanceof Model) {
             $user = self::find($user);
         }
-/** @var User $user */
 
         // user has not been found or no company selected - return no results
+        /** @var User $user */
         if (! $user || ! $user->getSelectedCompanyId()) {
             return $query->whereRaw('1 = 0');
         }
 
-        // we always choose users from currently selected company only
+        // we always choose users from currently selected company only with approved status
         $query->whereHas('companies', function ($q) use ($user) {
-            $q->where('companies.id', $user->getSelectedCompanyId());
+            $q->where('companies.id', $user->getSelectedCompanyId())
+                ->where('status', UserCompanyStatus::APPROVED);
         });
 
         // for admins and owners we don't limit results further
@@ -46,10 +48,9 @@ trait Allowed
         return $query->where(function ($q) use ($user) {
             $q->where('id', $user->id)
                 ->orWhereHas('projects', function ($q) use ($user) {
-                    $q->where('company_id', $user->getSelectedCompanyId())
-                        ->whereHas('users', function ($q) use ($user) {
-                            $q->where('project_user.user_id', $user->id);
-                        });
+                    $q->inCompany($user)->whereHas('users', function ($q) use ($user) {
+                        $q->where('project_user.user_id', $user->id);
+                    });
                 });
         });
     }

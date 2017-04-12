@@ -6,7 +6,7 @@ use App\Events\Event;
 use App\Models\Db\User;
 use Illuminate\Queue\SerializesModels;
 
-class UserWasActivated extends Event
+class ActivationTokenWasRequested extends Event
 {
     use SerializesModels;
 
@@ -18,13 +18,20 @@ class UserWasActivated extends Event
     public $user;
 
     /**
+     * @var
+     */
+    public $url;
+
+    /**
      * Create a new event instance.
      *
      * @param User $user
+     * @param string $url
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $url)
     {
         $this->user = $user;
+        $this->url = $url;
     }
 
     /**

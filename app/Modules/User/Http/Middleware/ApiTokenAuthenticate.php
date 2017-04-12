@@ -4,7 +4,7 @@ namespace App\Modules\User\Http\Middleware;
 
 use App\Helpers\ApiResponse;
 use App\Helpers\ErrorCode;
-use App\Models\User;
+use App\Models\Db\User;
 use App\Modules\Company\Exceptions\ExpiredToken;
 use App\Modules\Company\Exceptions\InvalidToken;
 use App\Modules\Company\Exceptions\NoTokenFound;
