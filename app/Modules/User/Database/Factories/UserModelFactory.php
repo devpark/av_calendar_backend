@@ -6,8 +6,23 @@ $factory->define(App\Models\User::class, function (Faker\Generator $faker) {
         'password' => $faker->password,
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
-        'role_id' => $faker->randomElement(\App\Models\Role::all()->pluck('id')
-            ->all()),
         'deleted' => 0,
+        'activated' => 1,
+        'activate_hash' => $faker->unique()->text(),
+    ];
+});
+
+$factory->define(App\Models\Role::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->unique()->name,
+        'default' => $faker->boolean(),
+    ];
+});
+
+$factory->define(App\Models\UserShortToken::class, function (Faker\Generator $faker) {
+    return [
+        'user_id' => $faker->randomNumber(6),
+        'token' => str_random(mt_rand(100, 150)),
+        'expires_at' => Carbon\Carbon::now()->addMinutes(2),
     ];
 });

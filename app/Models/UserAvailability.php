@@ -7,7 +7,7 @@ use App\Modules\CalendarAvailability\Traits\CalendarAvailable;
 class UserAvailability extends Model
 {
     use CalendarAvailable;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -23,20 +23,31 @@ class UserAvailability extends Model
         'time_stop',
         'available',
         'description',
+        'company_id',
     ];
 
     /**
-     * {inheritdoc}
+     * {inheritdoc}.
      */
     public $timestamps = false;
 
     /**
-     * Availability is assigned to specific user
+     * Availability is assigned to specific user.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Availability is assigned to company.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

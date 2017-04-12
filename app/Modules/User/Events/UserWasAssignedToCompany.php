@@ -6,34 +6,34 @@ use App\Events\Event;
 use App\Models\User;
 use Illuminate\Queue\SerializesModels;
 
-class UserWasCreated extends Event
+class UserWasAssignedToCompany extends Event
 {
     use SerializesModels;
 
     /**
-     * User that was created.
+     * User that was assigned to company.
      *
      * @var User
      */
     public $user;
 
     /**
-     * Activation url.
+     * Id of company user was assigned to.
      *
-     * @var string|null
+     * @var int
      */
-    public $url;
+    public $companyId;
 
     /**
      * Create a new event instance.
      *
      * @param User $user
-     * @param string|null $url
+     * @param int $companyId
      */
-    public function __construct(User $user, $url = null)
+    public function __construct(User $user, $companyId)
     {
         $this->user = $user;
-        $this->url = $url;
+        $this->companyId = $companyId;
     }
 
     /**

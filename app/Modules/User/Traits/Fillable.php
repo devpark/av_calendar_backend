@@ -5,7 +5,7 @@ namespace App\Modules\User\Traits;
 trait Fillable
 {
     /**
-     * Mutator to set password
+     * Mutator to set password.
      *
      * @param string $value
      */

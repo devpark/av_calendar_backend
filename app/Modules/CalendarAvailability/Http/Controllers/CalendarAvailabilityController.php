@@ -3,7 +3,6 @@
 namespace App\Modules\CalendarAvailability\Http\Controllers;
 
 use App\Helpers\ApiResponse;
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\UserAvailability;
@@ -12,12 +11,13 @@ use App\Modules\CalendarAvailability\Http\Requests\CalendarAvailabilityShow;
 use App\Modules\CalendarAvailability\Http\Requests\CalendarAvailabilityStore;
 use App\Modules\CalendarAvailability\Contracts\CalendarAvailability as CalendarService;
 use Carbon\Carbon;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Response;
 
 class CalendarAvailabilityController extends Controller
 {
     /**
-     * Display list of calendar availabilities
+     * Display list of calendar availabilities.
      *
      * @param CalendarAvailabilityIndex $request
      * @param CalendarService $service
@@ -43,12 +43,13 @@ class CalendarAvailabilityController extends Controller
 
     /**
      * Set user availability for given day. Removes any existing entries for
-     * this user in this day
+     * this user in this day.
      *
      * @param CalendarAvailabilityStore $request
      * @param User $user
      * @param $day
      * @param UserAvailability $userAv
+     * @param Guard $guard
      *
      * @return Response
      */
@@ -56,16 +57,19 @@ class CalendarAvailabilityController extends Controller
         CalendarAvailabilityStore $request,
         User $user,
         $day,
-        UserAvailability $userAv
+        UserAvailability $userAv,
+        Guard $guard
     ) {
-        $userAv::add($user->id, $day, $request->input('availabilities', []));
+        $userAv::add($user->id, $guard->user()->getSelectedCompanyId(), $day,
+            $request->input('availabilities', []));
 
         return ApiResponse::responseOk(
-            UserAvailability::getForObjectsAndDays($user->id, $day), 201);
+            UserAvailability::getForObjectsAndDays($user->id,
+                $guard->user()->getSelectedCompanyId(), $day), 201);
     }
 
     /**
-     * Get calendar availability for selected user in selected day
+     * Get calendar availability for selected user in selected day.
      *
      * @param CalendarAvailabilityShow $request
      * @param User $user
@@ -73,11 +77,11 @@ class CalendarAvailabilityController extends Controller
      *
      * @return Response
      * @internal param int $id
-     *
      */
-    public function show(CalendarAvailabilityShow $request, User $user, $day)
+    public function show(CalendarAvailabilityShow $request, User $user, $day, Guard $guard)
     {
         return ApiResponse::responseOk(
-            UserAvailability::getForObjectsAndDays($user->id, $day), 200);
+            UserAvailability::getForObjectsAndDays($user->id,
+                $guard->user()->getSelectedCompanyId(), $day), 200);
     }
 }

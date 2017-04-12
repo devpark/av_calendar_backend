@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 class CalendarAvailabilityDatabaseSeeder extends Seeder
 {
     /**
-     * Run seeds for CalendarAvailability
+     * Run seeds for CalendarAvailability.
      */
     public function run()
     {

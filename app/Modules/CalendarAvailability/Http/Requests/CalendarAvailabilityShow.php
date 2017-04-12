@@ -18,7 +18,7 @@ class CalendarAvailabilityShow extends Request
             'user' => ['required'],
             'day' => ['required', 'date'],
         ];
-        
+
         return $rules;
     }
 

@@ -5,7 +5,7 @@ namespace App\Modules\User\Traits;
 trait Active
 {
     /**
-     * Choose only active users
+     * Choose only active users.
      *
      * @param \Illuminate\Database\Query\Builder $query
      *
@@ -13,6 +13,6 @@ trait Active
      */
     public function scopeActive($query)
     {
-        return $query->where('deleted', 0);
+        return $query->where('deleted', 0)->where('activated', 1);
     }
 }

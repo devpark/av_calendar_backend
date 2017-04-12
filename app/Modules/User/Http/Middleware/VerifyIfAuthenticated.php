@@ -43,9 +43,8 @@ class VerifyIfAuthenticated
         }
 
         // if user is not deleted it means they are already logged
-        if ($user && !$user->isDeleted()) {
-            return ApiResponse::responseError(ErrorCode::AUTH_ALREADY_LOGGED,
-                403);
+        if ($user && ! $user->isDeleted() && $user->isActivated()) {
+            return ApiResponse::responseError(ErrorCode::AUTH_ALREADY_LOGGED, 403);
         }
 
         return $next($request);

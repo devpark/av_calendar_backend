@@ -2,11 +2,7 @@
 
 namespace App\Modules\User\Http\Middleware;
 
-use App\Helpers\ApiResponse;
-use App\Helpers\ErrorCode;
 use Closure;
-use Tymon\JWTAuth\Exceptions\TokenExpiredException;
-use JWTAuth;
 
 class RefreshToken
 {

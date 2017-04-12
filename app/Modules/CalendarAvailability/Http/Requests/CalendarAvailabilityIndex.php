@@ -13,11 +13,11 @@ class CalendarAvailabilityIndex extends Request
      */
     public function rules()
     {
-        $rules =  [
+        $rules = [
             'from' => ['required','date'],
             'limit' => ['int','min:1','max:31'],
         ];
-        
+
         return $rules;
     }
 }

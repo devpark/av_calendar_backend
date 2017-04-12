@@ -4,28 +4,75 @@ namespace App\Models;
 
 class RoleType
 {
+    /**
+     * Company owner.
+     */
+    const OWNER = 'owner';
+
+    /**
+     * Company admin.
+     */
     const ADMIN = 'admin';
+
+    /**
+     * Company dealer.
+     */
     const DEALER = 'dealer';
+
+    /**
+     * Company developer.
+     */
     const DEVELOPER = 'developer';
+
+    /**
+     * Company client.
+     */
     const CLIENT = 'client';
 
     /**
-     * Get all available role types
+     * System admin.
+     */
+    const SYSTEM_ADMIN = 'system_admin';
+
+    /**
+     * System user.
+     */
+    const SYSTEM_USER = 'system_user';
+
+    /**
+     * Company employee.
+     */
+    const EMPLOYEE = 'employee';
+
+    /**
+     * Role for API user.
+     */
+    const API_USER = 'api.user';
+
+    /**
+     * Role for API company.
+     */
+    const API_COMPANY = 'api.company';
+
+    /**
+     * Get all available company role types.
      *
      * @return array
      */
     public static function all()
     {
         return [
+            self::OWNER,
             self::ADMIN,
             self::DEALER,
             self::DEVELOPER,
             self::CLIENT,
+            self::EMPLOYEE,
         ];
     }
 
     /**
-     * Get default user role
+     * Get default user role.
      *
      * @return string
      */

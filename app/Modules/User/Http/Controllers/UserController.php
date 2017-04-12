@@ -3,20 +3,18 @@
 namespace App\Modules\User\Http\Controllers;
 
 use App\Helpers\ApiResponse;
-use App\Http\Requests;
+use App\Helpers\ErrorCode;
 use App\Http\Controllers\Controller;
-use App\Models\Role;
-use App\Models\RoleType;
 use App\Models\User;
-use App\Modules\User\Events\UserWasCreated;
 use App\Modules\User\Http\Requests\CreateUser;
+use App\Modules\User\Http\Requests\UpdateUser;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Events\Dispatcher as Event;
+use App\Modules\User\Services\User as UserService;
 
 class UserController extends Controller
 {
     /**
-     * Get list of all allowed users
+     * Get list of all allowed users.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -26,46 +24,22 @@ class UserController extends Controller
     }
 
     /**
-     * Creates new user
+     * Creates new user.
      *
      * @param CreateUser $request
-     * @param Event $event
-     * @param Guard $auth
+     * @param UserService $service
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateUser $request, Event $event, Guard $auth)
+    public function store(CreateUser $request, UserService $service)
     {
-        $input = $request->all();
-
-        // no password - we will generate random
-        if (trim($request->input('password')) == '') {
-            $input['password'] = str_random(16);
-        }
-
-        // user not logged or not admin - we don't allow setting role
-        // we use default one
-        if (!$auth->check() || !auth()->user()->isAdmin()) {
-            $input['role_id'] =
-                Role::where('name', RoleType::default())->first()->id;
-        }
-
-        // create user
-        $user = User::create($input);
-        // find created user in database (so we have all the fields)
-        $user = User::find($user->id);
-
-        // fire user created event
-        $event->fire(new UserWasCreated($user,
-            array_merge($request->only('send_user_notification', 'url'), [
-                'creator_id' => $auth->check() ? $auth->user()->id : $user->id,
-            ])));
+        $user = $service->create($request);
 
         return ApiResponse::responseOk($user, 201);
     }
 
     /**
-     * Return current user data
+     * Return current user data.
      *
      * @param Guard $auth
      *
@@ -74,8 +48,42 @@ class UserController extends Controller
     public function current(Guard $auth)
     {
         $user = $auth->user();
-        $user->load('role');
+
+        /*
+         * @see \Illuminate\Database\Eloquent\Model;
+         */
+        $user->load('selectedUserCompany.role', 'selectedUserCompany.company');
 
         return ApiResponse::responseOk($user);
+    }
+
+    /**
+     * Return list of companies for current user.
+     *
+     * @param Guard $auth
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function companies(Guard $auth)
+    {
+        return ApiResponse::responseOk($auth->user()->companies);
+    }
+
+    /**
+     * @param UpdateUser $request
+     * @param UserService $service
+     * @param $id
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(UpdateUser $request, UserService $service, $id)
+    {
+        $user = User::findOrFail($id);
+        if ($request->input('password') && ! $service->checkPassword($user, $request)) {
+            return ApiResponse::responseError(ErrorCode::PASSWORD_INVALID_PASSWORD, 422);
+        }
+
+        $service->updateData($user, $request);
+
+        return ApiResponse::responseOK([]);
     }
 }

@@ -8,12 +8,10 @@ use Closure;
 use Illuminate\Cache\RateLimiter;
 
 /**
- * Class ThrottleRequests
- * 
+ * Class ThrottleRequests.
+ *
  * This class is based on Illuminate\Routing\Middleware\ThrottleRequests however
  * it return custom response in case of too many attempts
- *
- * @package App\Http\Middleware
  */
 class ThrottleRequests
 {
@@ -67,7 +65,7 @@ class ThrottleRequests
         $this->limiter->hit($key, $decayMinutes);
 
         $response = $next($request);
-        
+
         $response->headers->add([
             'X-RateLimit-Limit' => $maxAttempts,
             'X-RateLimit-Remaining' => $maxAttempts -
