@@ -31,7 +31,7 @@ Route::group(['middleware' => 'api_authorized'], function () {
     Route::get('users', 'UserController@index')->name('users.index');
     Route::get('users/current', 'UserController@current')->name('users.current');
     Route::get('users/current/companies', 'UserController@companies')->name('users.current.companies');
-    Route::put('users/{id}', 'UserController@update');
+    Route::put('users/{user}', 'UserController@update');
 });
 
 Route::group(['middleware' => 'external_api_authorized'], function () {

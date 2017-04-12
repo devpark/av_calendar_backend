@@ -75,9 +75,8 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateUser $request, UserService $service, $id)
+    public function update(UpdateUser $request, UserService $service, User $user)
     {
-        $user = User::findOrFail($id);
         if ($request->input('password') && ! $service->checkPassword($user, $request)) {
             return ApiResponse::responseError(ErrorCode::PASSWORD_INVALID_PASSWORD, 422);
         }
